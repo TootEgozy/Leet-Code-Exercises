@@ -1,17 +1,32 @@
 // Link to question: https://leetcode.com/problems/longest-palindromic-substring
 
-// אני בוחרת את התו הראשון ושומרת אותו ואת המיקום שלו.
-// ממשיכה לתו השני, אם הוא זהה לראשון אז אני בודקת את המערך בין שני התווים והאם הוא סימטרי. אם כן אני שומרת את האורך שלו.
-// אם הוא לא זהה אני שומרת אותו ואת האורך שלו וומשיכה לתו השלישי.
+type Map = {
+  [key: string]: number[]
+} & {
+  longest: string
+}
 
-// באופן זהת אני עוברת על המערך רק פעם אחת וכל פעם שאני נתקלת בתו חוזר אני בודקת אם יש לי פילנדרום.
-// אם יש לי פילנדרום אני בודקת האם הוא מקסימלי באורכו ואם כן שומרת אותו.
-// אם יש לי פלינדרום שהוא חלק מפלינדרום גדול יותר (למשל תתאתת) אני צריכה לשמור אותו כKEY במפה
-// אז אני בעצם צריכה להשוות פלינדרומים ממערך זמני למפתחות במפה
-// אני מחיזרה את הפילנדרום הארוך ביותר.
+const isPalindrome = (s: string) => {
+  const firstHalf = s.slice(0, Math.floor(s.length / 2));
+  const secondHalf = s.slice(Math.ceil(s.length / 2), s.length);
+  return firstHalf === secondHalf.split('').reverse().join('');
+}
 
 function longestPalindrome(s: string): string {
-  const chars = 'abffffgffffrgjhrn'
-  return '';
-};
-export default longestPalindrome;
+  // @ts-ignore //Todo: fix types
+  const map: Map = { longest: s[0] };
+  for(let i = 0; i < s.length; i++) {
+    const char = s[i];
+    if(map[char]) {
+      map[char].forEach((j: number) => {
+        const segment = s.slice(j, i+1);
+        if (isPalindrome(segment) && map.longest.length < segment.length) map.longest = segment;
+      });
+      map[char].push(i);
+    }
+    map[char] = [i];
+  }
+  return map.longest || s[0];
+}
+
+export { isPalindrome, longestPalindrome };

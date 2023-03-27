@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import longestPalindrome from "./index";
+import { longestPalindrome } from "./index";
 import * as faker from 'faker';
 
 const generatePalindrome = (length: number) => {
@@ -13,7 +13,7 @@ const generatePalindrome = (length: number) => {
 
 describe('5: Longest Palindromic Substring', () => {
   it('should return the string length of an even palindromic string', () => {
-      const pal = generatePalindrome(8);
+      const pal = generatePalindrome(5);
       expect(longestPalindrome(pal)).to.eq(pal);
   });
 
