@@ -1,52 +1,61 @@
 import { expect } from "chai";
-import { longestPalindrome } from "./index";
-import * as faker from 'faker';
+import { mergeKLists, ListNode } from "./index";
 
-const generatePalindrome = (length: number) => {
-  const middleChar = faker.random.alpha({ count: 1 });
-  if (length === 1) return middleChar;
-  let chars = faker.random.alpha({ count: Math.floor(length / 2) });
-  const mirror = chars.split('').reverse().join('');
-  if (length % 2 !== 0) chars = chars.concat(middleChar);
-  return chars.concat(mirror);
+const createLinkedList = (values: number[]): ListNode => {
+  let node: ListNode | null = null;
+  values.reverse().forEach((val: number) => {
+    const newNode = new ListNode(val, node);
+    node = newNode;
+  });
+  return node as unknown as ListNode;
 }
 
-describe('5: Longest Palindromic Substring', () => {
-  it('should return the string length of an even palindromic string', () => {
-      const pal = generatePalindrome(5);
-      expect(longestPalindrome(pal)).to.eq(pal);
+const valuesFromList = (lstnode: ListNode | null, valArr: number[] = []): number[] => {
+  if(lstnode === null) return valArr;
+  valArr.push(lstnode.val);
+  return valuesFromList(lstnode.next, valArr);
+}
+
+describe('23: Merge K Sorted lists', () => {
+  it('should combine two linked lists', () => {
+    const lists = [createLinkedList([1, 3, 5]), createLinkedList([2, 4])];
+    const result = mergeKLists(lists);
+    expect(valuesFromList(result as ListNode)).to.eql([1, 2, 3, 4, 5]);
   });
 
-  it('should return the string length of an odd palindromic string', () => {
-      const pal = generatePalindrome(7);
-      expect(longestPalindrome(pal)).to.eq(pal);
+  it('should combine linked lists with duplicates', () => {
+    const lists = [createLinkedList([3, 3, 9]), createLinkedList([3, 10])];
+    const result = mergeKLists(lists);
+    expect(valuesFromList(result as ListNode)).to.eql([3, 3, 3, 9, 10]);
   });
 
-  it('should return 1 for a single char string', () => {
-      const pal = faker.random.alpha({ count: 1 });
-      expect(longestPalindrome(pal)).to.eq(pal);
+  it('should combine multiple linked lists', () => {
+    const lists = [
+      [1, 5, 14],
+      [3],
+      [200],
+      [5, 5, 10],
+      [11, 12, 13, 14],
+      [1]
+    ].map((values) => createLinkedList(values));
+    const result = mergeKLists(lists);
+    expect(valuesFromList(result as ListNode)).to.eql([1, 1, 3, 5, 5, 5, 10, 11, 12, 13, 14, 14, 200]);
   });
 
-  it('should return 2 for a two-char string', () => {
-      const pal = generatePalindrome(2);
-      expect(longestPalindrome(pal)).to.eq(pal);
+  it('should combine a single list', () => {
+    const lists = [createLinkedList([3, 3, 9])];
+    const result = mergeKLists(lists);
+    expect(valuesFromList(result as ListNode)).to.eql([3, 3, 9]);
   });
 
-  it('should return palindrome length when it\'s in the beginning of a string', () => {
-      const pal = generatePalindrome(3);
-      const str = 'abcd'.concat(pal);
-      expect(longestPalindrome(str)).to.eq(pal);
+  it('should return an empty array for no lists', () => {
+    const result = mergeKLists([]);
+    expect(result).to.eql([]);
   });
 
-  it('should return palindrome length when it\'s in the end of a string', () => {
-      const pal = generatePalindrome(4);
-      const str = pal.concat('efgh');
-      expect(longestPalindrome(str)).to.eq(pal);
-  });
+  // I didn't write code or tests for example 3 of the question, where my input is: [[], []]
+  // Or for a case where I have both empty arrays and listNodes in the K lists
+  // Because it's a random input that is not related to the question,
+  // since in JS a listNode is represented by an object
 
-  it('should return palindrome length when it\'s in the middle of a string', () => {
-      const pal = generatePalindrome(2);
-      const str = 'abcd'.concat(pal).concat('efgh');
-      expect(longestPalindrome(str)).to.eq(pal);
-  });
 });
