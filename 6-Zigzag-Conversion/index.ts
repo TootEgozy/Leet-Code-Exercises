@@ -4,6 +4,7 @@
  * @return {string}
  */
 const convert = (s: string, numRows: number) => {
+  if(!numRows) return s;
   const collection = Array.apply(null, Array(numRows)).map((): string[] => []);
 
   let des = true; // is the direction descending?
@@ -25,11 +26,7 @@ const convert = (s: string, numRows: number) => {
       }
     }
   });
-
-  console.log(collection)
-
+  return collection.reduce((acc, arr) => acc.concat(arr.join(''))).join('');
 };
-
-convert("abcdefghijklmnop", 3);
 
 export { convert }
